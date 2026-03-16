@@ -5,16 +5,16 @@ A professional *Vehicle Parking Management System* built as part of the *Cloud E
 ## 📸 Screenshots
 
 ### 🏠 Dashboard
-![Dashboard](images/dashboard.png)
+![Dashboard](dashboard.png)
 
 ### 📥 Vehicle Entry
-![Vehicle Entry](images/entry.png)
+![Vehicle Entry](entry.png)
 
 ### 🅿️ Slot View
-![Slot View](images/slots.png)
+![Slot View](slots.png)
 
 ### 🧾 Bill Receipt
-![Bill Receipt](images/bill.png)
+![Bill Receipt](bill.png)
 
 ---
 
