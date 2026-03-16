@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParkSmart – Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #f0f4ff; --white: #ffffff; --surface: #f8faff; --border: #e2e8f5;
+            --primary: #2563eb; --primary-light: #eff6ff; --primary-dark: #1d4ed8;
+            --green: #059669; --green-light: #ecfdf5; --red: #dc2626; --red-light: #fef2f2;
+            --text: #0f172a; --text2: #475569; --muted: #94a3b8;
+            --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(37,99,235,0.06);
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+        nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; position: sticky; top: 0; z-index: 100; }
+        .nav-brand { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
+        .nav-icon { width: 36px; height: 36px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+        .nav-title { font-size: 1.1rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
+        .nav-title span { color: var(--primary); }
+        .nav-links { display: flex; gap: 0.3rem; }
+        .nav-links a { text-decoration: none; color: var(--text2); font-size: 0.875rem; font-weight: 500; padding: 0.45rem 0.9rem; border-radius: 8px; transition: all 0.15s; }
+        .nav-links a:hover { background: var(--primary-light); color: var(--primary); }
+        .nav-links a.active { background: var(--primary); color: white; }
+        main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+        .page-header { margin-bottom: 1.8rem; }
+        .page-header h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; }
+        .page-header p { color: var(--text2); font-size: 0.875rem; margin-top: 0.3rem; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 1.2rem 1.4rem; box-shadow: var(--shadow); }
+        .stat-card .label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 0.5rem; }
+        .stat-card .value { font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; }
+        .stat-card .sub { font-size: 0.78rem; color: var(--text2); margin-top: 0.25rem; }
+        .stat-card.primary { background: var(--primary); border-color: var(--primary); }
+        .stat-card.primary .label, .stat-card.primary .value, .stat-card.primary .sub { color: white; }
+        .stat-card.green .value { color: var(--green); }
+        .stat-card.red .value { color: var(--red); }
+        .type-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.8rem; }
+        .type-card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 1.2rem; box-shadow: var(--shadow); }
+        .type-header { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 1rem; }
+        .type-icon { font-size: 1.5rem; }
+        .type-name { font-weight: 700; font-size: 0.95rem; }
+        .type-rate { font-size: 0.75rem; color: var(--muted); }
+        .slot-bar { height: 8px; background: var(--bg); border-radius: 99px; overflow: hidden; margin-bottom: 0.7rem; }
+        .slot-fill { height: 100%; background: var(--primary); border-radius: 99px; }
+        .slot-numbers { display: flex; justify-content: space-between; font-size: 0.78rem; }
+        .slot-avail { color: var(--green); font-weight: 600; }
+        .slot-occ { color: var(--red); font-weight: 600; }
+        .card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; }
+        .card-header { padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .card-header h2 { font-size: 1rem; font-weight: 700; }
+        .badge { background: var(--primary-light); color: var(--primary); font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 99px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: var(--surface); padding: 0.8rem 1.2rem; text-align: left; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); border-bottom: 1px solid var(--border); }
+        td { padding: 0.9rem 1.2rem; border-bottom: 1px solid var(--border); font-size: 0.875rem; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: var(--surface); }
+        .vehicle-num { font-weight: 700; font-family: monospace; font-size: 0.95rem; color: var(--primary); }
+        .type-pill { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.25rem 0.65rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600; }
+        .pill-tw { background: #fef3c7; color: #92400e; }
+        .pill-fw { background: #dbeafe; color: #1e40af; }
+        .pill-hv { background: #fce7f3; color: #9d174d; }
+        .slot-badge { background: var(--green-light); color: var(--green); font-weight: 700; font-size: 0.78rem; padding: 0.2rem 0.55rem; border-radius: 6px; }
+        .empty-state { text-align: center; padding: 3rem; color: var(--muted); }
+        .empty-state .icon { font-size: 2.5rem; margin-bottom: 0.7rem; }
+        .action-btn { display: inline-flex; align-items: center; gap: 0.4rem; background: var(--primary); color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; transition: background 0.15s; }
+        .action-btn:hover { background: var(--primary-dark); }
+    </style>
+</head>
+<body>
+<nav>
+    <a class="nav-brand" href="/"><div class="nav-icon">🅿️</div><span class="nav-title">Park<span>Smart</span></span></a>
+    <div class="nav-links">
+        <a href="/" class="active">Dashboard</a>
+        <a href="/entry">Vehicle Entry</a>
+        <a href="/exit">Vehicle Exit</a>
+        <a href="/slots">Slot View</a>
+        <a href="/records">All Records</a>
+    </div>
+</nav>
+<main>
+    <div class="page-header">
+        <h1>Parking Dashboard</h1>
+        <p>Real-time overview of parking facility status</p>
+    </div>
+    <div class="stats-grid">
+        <div class="stat-card primary">
+            <div class="label">Total Slots</div>
+            <div class="value" th:text="${totalSlots}">25</div>
+            <div class="sub">Across all 3 floors</div>
+        </div>
+        <div class="stat-card green">
+            <div class="label">Available</div>
+            <div class="value" th:text="${availableSlots}">0</div>
+            <div class="sub">Slots free right now</div>
+        </div>
+        <div class="stat-card red">
+            <div class="label">Occupied</div>
+            <div class="value" th:text="${occupiedSlots}">0</div>
+            <div class="sub">Vehicles parked</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Currently Parked</div>
+            <div class="value" th:text="${totalParked}">0</div>
+            <div class="sub">Active sessions</div>
+        </div>
+    </div>
+    <div class="type-grid">
+        <div class="type-card">
+            <div class="type-header"><span class="type-icon">🏍️</span><div><div class="type-name">2-Wheeler</div><div class="type-rate">₹10 / hour · Floor 1</div></div></div>
+            <div class="slot-bar"><div class="slot-fill" th:style="'width:' + (${twOccupied} * 100 / 10) + '%'"></div></div>
+            <div class="slot-numbers"><span class="slot-avail" th:text="${twAvail} + ' available'">10 available</span><span class="slot-occ" th:text="${twOccupied} + ' occupied'">0 occupied</span></div>
+        </div>
+        <div class="type-card">
+            <div class="type-header"><span class="type-icon">🚗</span><div><div class="type-name">4-Wheeler</div><div class="type-rate">₹20 / hour · Floor 2</div></div></div>
+            <div class="slot-bar"><div class="slot-fill" th:style="'width:' + (${fwOccupied} * 100 / 10) + '%'"></div></div>
+            <div class="slot-numbers"><span class="slot-avail" th:text="${fwAvail} + ' available'">10 available</span><span class="slot-occ" th:text="${fwOccupied} + ' occupied'">0 occupied</span></div>
+        </div>
+        <div class="type-card">
+            <div class="type-header"><span class="type-icon">🚛</span><div><div class="type-name">Heavy Vehicle</div><div class="type-rate">₹40 / hour · Floor 3</div></div></div>
+            <div class="slot-bar"><div class="slot-fill" th:style="'width:' + (${hvOccupied} * 100 / 5) + '%'"></div></div>
+            <div class="slot-numbers"><span class="slot-avail" th:text="${hvAvail} + ' available'">5 available</span><span class="slot-occ" th:text="${hvOccupied} + ' occupied'">0 occupied</span></div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h2>Currently Parked Vehicles</h2>
+            <div style="display:flex;gap:0.7rem;align-items:center;">
+                <span class="badge" th:text="${totalParked} + ' vehicles'">0 vehicles</span>
+                <a href="/entry" class="action-btn">+ Vehicle Entry</a>
+            </div>
+        </div>
+        <div th:if="${parkedVehicles.isEmpty()}" class="empty-state">
+            <div class="icon">🅿️</div>
+            <p>No vehicles currently parked. <a href="/entry" style="color:var(--primary);">Register a vehicle</a></p>
+        </div>
+        <table th:if="${!parkedVehicles.isEmpty()}">
+            <thead>
+                <tr>
+                    <th>#</th><th>Vehicle Number</th><th>Owner</th><th>Mobile</th><th>Type</th><th>Slot</th><th>Entry Time</th><th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="r, i : ${parkedVehicles}">
+                    <td th:text="${i.count}" style="color:var(--muted);">1</td>
+                    <td><span class="vehicle-num" th:text="${r.vehicleNumber}">TN01AB1234</span></td>
+                    <td th:text="${r.ownerName}">Name</td>
+                    <td th:text="${r.mobileNumber}">9999999999</td>
+                    <td>
+                        <span th:if="${r.vehicleType.name() == 'TWO_WHEELER'}" class="type-pill pill-tw">🏍️ 2-Wheeler</span>
+                        <span th:if="${r.vehicleType.name() == 'FOUR_WHEELER'}" class="type-pill pill-fw">🚗 4-Wheeler</span>
+                        <span th:if="${r.vehicleType.name() == 'HEAVY'}" class="type-pill pill-hv">🚛 Heavy</span>
+                    </td>
+                    <td><span class="slot-badge" th:text="${r.slot.slotNumber}">FW-01</span></td>
+                    <td th:text="${#temporals.format(r.entryTime, 'dd MMM yyyy, HH:mm')}">01 Jan 2024</td>
+                    <td><a th:href="@{/exit}" class="action-btn" style="background:var(--green);">Exit →</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

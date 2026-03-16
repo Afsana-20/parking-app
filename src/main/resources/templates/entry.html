@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParkSmart – Vehicle Entry</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #f0f4ff; --white: #ffffff; --surface: #f8faff; --border: #e2e8f5;
+            --primary: #2563eb; --primary-light: #eff6ff; --primary-dark: #1d4ed8;
+            --green: #059669; --green-light: #ecfdf5; --red: #dc2626; --red-light: #fef2f2;
+            --text: #0f172a; --text2: #475569; --muted: #94a3b8;
+            --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(37,99,235,0.06);
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+        nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; position: sticky; top: 0; z-index: 100; }
+        .nav-brand { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
+        .nav-icon { width: 36px; height: 36px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+        .nav-title { font-size: 1.1rem; font-weight: 800; color: var(--text); }
+        .nav-title span { color: var(--primary); }
+        .nav-links { display: flex; gap: 0.3rem; }
+        .nav-links a { text-decoration: none; color: var(--text2); font-size: 0.875rem; font-weight: 500; padding: 0.45rem 0.9rem; border-radius: 8px; transition: all 0.15s; }
+        .nav-links a:hover { background: var(--primary-light); color: var(--primary); }
+        .nav-links a.active { background: var(--primary); color: white; }
+        main { max-width: 600px; margin: 0 auto; padding: 2rem 1.5rem; }
+        .page-header { margin-bottom: 1.8rem; }
+        .page-header h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; }
+        .page-header p { color: var(--text2); font-size: 0.875rem; margin-top: 0.3rem; }
+        .alert { padding: 1rem 1.2rem; border-radius: 10px; margin-bottom: 1.2rem; font-size: 0.875rem; font-weight: 500; }
+        .alert-success { background: var(--green-light); color: var(--green); border: 1px solid #a7f3d0; }
+        .alert-error { background: var(--red-light); color: var(--red); border: 1px solid #fecaca; }
+        .form-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; box-shadow: var(--shadow); }
+        .form-card h2 { font-size: 1.05rem; font-weight: 700; margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1.1rem; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text2); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        input[type="text"] { width: 100%; padding: 0.7rem 1rem; border: 1.5px solid var(--border); border-radius: 9px; font-family: inherit; font-size: 0.9rem; color: var(--text); background: var(--surface); outline: none; transition: border-color 0.15s; }
+        input[type="text"]:focus { border-color: var(--primary); background: white; }
+        input::placeholder { color: var(--muted); }
+        .type-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; }
+        .type-card input { display: none; }
+        .type-card label { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; padding: 1rem; border: 2px solid var(--border); border-radius: 12px; cursor: pointer; background: var(--surface); transition: all 0.15s; text-transform: none; letter-spacing: 0; }
+        .type-card label:hover { border-color: var(--primary); background: var(--primary-light); }
+        .type-card input:checked + label { border-color: var(--primary); background: var(--primary-light); }
+        .t-icon { font-size: 1.6rem; }
+        .t-name { font-size: 0.8rem; font-weight: 700; color: var(--text); }
+        .t-rate { font-size: 0.7rem; color: var(--muted); }
+        .divider { border: none; border-top: 1px solid var(--border); margin: 1.3rem 0; }
+        .btn-submit { width: 100%; padding: 0.85rem; background: var(--primary); color: white; border: none; border-radius: 10px; font-family: inherit; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+        .btn-submit:hover { background: var(--primary-dark); }
+        .rate-info { background: var(--primary-light); border: 1px solid #bfdbfe; border-radius: 10px; padding: 0.9rem 1.1rem; margin-top: 1.5rem; }
+        .rate-info h3 { font-size: 0.78rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.6rem; }
+        .rate-row { display: flex; justify-content: space-between; font-size: 0.82rem; padding: 0.2rem 0; }
+        .rate-row span:last-child { font-weight: 700; color: var(--primary); }
+    </style>
+</head>
+<body>
+<nav>
+    <a class="nav-brand" href="/"><div class="nav-icon">🅿️</div><span class="nav-title">Park<span>Smart</span></span></a>
+    <div class="nav-links">
+        <a href="/">Dashboard</a>
+        <a href="/entry" class="active">Vehicle Entry</a>
+        <a href="/exit">Vehicle Exit</a>
+        <a href="/slots">Slot View</a>
+        <a href="/records">All Records</a>
+    </div>
+</nav>
+<main>
+    <div class="page-header">
+        <h1>📥 Vehicle Entry</h1>
+        <p>Register a new vehicle and assign a parking slot</p>
+    </div>
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+    <div class="form-card">
+        <h2>🚘 Register Vehicle</h2>
+        <form th:action="@{/entry}" method="post">
+            <div class="form-group">
+                <label>Vehicle Number *</label>
+                <input type="text" name="vehicleNumber" placeholder="e.g. TN01AB1234" required maxlength="15" style="text-transform:uppercase;"/>
+            </div>
+            <div class="form-group">
+                <label>Owner Name *</label>
+                <input type="text" name="ownerName" placeholder="Full name of vehicle owner" required maxlength="100"/>
+            </div>
+            <div class="form-group">
+                <label>Mobile Number</label>
+                <input type="text" name="mobileNumber" placeholder="10-digit mobile number" maxlength="15"/>
+            </div>
+            <hr class="divider"/>
+            <div class="form-group">
+                <label>Vehicle Type *</label>
+                <div class="type-cards">
+                    <div class="type-card">
+                        <input type="radio" name="vehicleType" id="tw" value="TWO_WHEELER" required/>
+                        <label for="tw"><span class="t-icon">🏍️</span><span class="t-name">2-Wheeler</span><span class="t-rate">₹10/hr</span></label>
+                    </div>
+                    <div class="type-card">
+                        <input type="radio" name="vehicleType" id="fw" value="FOUR_WHEELER"/>
+                        <label for="fw"><span class="t-icon">🚗</span><span class="t-name">4-Wheeler</span><span class="t-rate">₹20/hr</span></label>
+                    </div>
+                    <div class="type-card">
+                        <input type="radio" name="vehicleType" id="hv" value="HEAVY"/>
+                        <label for="hv"><span class="t-icon">🚛</span><span class="t-name">Heavy</span><span class="t-rate">₹40/hr</span></label>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn-submit">Assign Slot & Park Vehicle →</button>
+        </form>
+        <div class="rate-info">
+            <h3>💡 Parking Rates (Minimum 1 Hour)</h3>
+            <div class="rate-row"><span>🏍️ 2-Wheeler (Floor 1)</span><span>₹10 / hour</span></div>
+            <div class="rate-row"><span>🚗 4-Wheeler (Floor 2)</span><span>₹20 / hour</span></div>
+            <div class="rate-row"><span>🚛 Heavy Vehicle (Floor 3)</span><span>₹40 / hour</span></div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

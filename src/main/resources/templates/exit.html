@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParkSmart – Vehicle Exit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #f0f4ff; --white: #ffffff; --surface: #f8faff; --border: #e2e8f5;
+            --primary: #2563eb; --primary-light: #eff6ff; --primary-dark: #1d4ed8;
+            --green: #059669; --green-light: #ecfdf5; --red: #dc2626; --red-light: #fef2f2;
+            --text: #0f172a; --text2: #475569; --muted: #94a3b8;
+            --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(37,99,235,0.06);
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+        nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; position: sticky; top: 0; z-index: 100; }
+        .nav-brand { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
+        .nav-icon { width: 36px; height: 36px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+        .nav-title { font-size: 1.1rem; font-weight: 800; color: var(--text); }
+        .nav-title span { color: var(--primary); }
+        .nav-links { display: flex; gap: 0.3rem; }
+        .nav-links a { text-decoration: none; color: var(--text2); font-size: 0.875rem; font-weight: 500; padding: 0.45rem 0.9rem; border-radius: 8px; transition: all 0.15s; }
+        .nav-links a:hover { background: var(--primary-light); color: var(--primary); }
+        .nav-links a.active { background: var(--primary); color: white; }
+        main { max-width: 620px; margin: 0 auto; padding: 2rem 1.5rem; }
+        .page-header { margin-bottom: 1.8rem; }
+        .page-header h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; }
+        .page-header p { color: var(--text2); font-size: 0.875rem; margin-top: 0.3rem; }
+        .alert { padding: 1rem 1.2rem; border-radius: 10px; margin-bottom: 1.2rem; font-size: 0.875rem; font-weight: 500; }
+        .alert-error { background: var(--red-light); color: var(--red); border: 1px solid #fecaca; }
+        .form-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; box-shadow: var(--shadow); margin-bottom: 1.5rem; }
+        .form-card h2 { font-size: 1.05rem; font-weight: 700; margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1.1rem; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text2); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        input[type="text"] { width: 100%; padding: 0.7rem 1rem; border: 1.5px solid var(--border); border-radius: 9px; font-family: inherit; font-size: 0.9rem; color: var(--text); background: var(--surface); outline: none; transition: border-color 0.15s; }
+        input[type="text"]:focus { border-color: var(--primary); background: white; }
+        input::placeholder { color: var(--muted); }
+        .btn-submit { width: 100%; padding: 0.85rem; background: var(--red); color: white; border: none; border-radius: 10px; font-family: inherit; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+        .btn-submit:hover { background: #b91c1c; }
+        .bill-card { background: var(--white); border: 2px solid var(--green); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(5,150,105,0.12); }
+        .bill-header { background: var(--green); color: white; padding: 1.3rem 1.8rem; display: flex; align-items: center; justify-content: space-between; }
+        .bill-header h2 { font-size: 1.1rem; font-weight: 800; }
+        .paid-badge { background: white; color: var(--green); font-size: 0.75rem; font-weight: 800; padding: 0.3rem 0.8rem; border-radius: 99px; }
+        .bill-body { padding: 1.8rem; }
+        .bill-title { text-align: center; margin-bottom: 1.5rem; }
+        .bill-title .org { font-size: 1.2rem; font-weight: 800; color: var(--text); }
+        .bill-title .sub { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
+        .bill-divider { border: none; border-top: 1px dashed var(--border); margin: 1rem 0; }
+        .bill-row { display: flex; justify-content: space-between; align-items: center; padding: 0.45rem 0; font-size: 0.875rem; }
+        .bill-row .key { color: var(--text2); }
+        .bill-row .val { font-weight: 600; color: var(--text); }
+        .bill-total { background: var(--green-light); border-radius: 10px; padding: 1rem 1.2rem; margin-top: 1rem; display: flex; justify-content: space-between; align-items: center; }
+        .bill-total .key { font-weight: 700; color: var(--green); font-size: 1rem; }
+        .bill-total .val { font-size: 1.6rem; font-weight: 800; color: var(--green); }
+        .bill-actions { display: flex; gap: 0.8rem; margin-top: 1.3rem; }
+        .btn-print { flex: 1; padding: 0.75rem; background: var(--primary); color: white; border: none; border-radius: 9px; font-family: inherit; font-weight: 700; font-size: 0.875rem; cursor: pointer; }
+        .btn-back { flex: 1; padding: 0.75rem; background: var(--surface); color: var(--text2); border: 1px solid var(--border); border-radius: 9px; font-family: inherit; font-weight: 700; font-size: 0.875rem; text-decoration: none; display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+<nav>
+    <a class="nav-brand" href="/"><div class="nav-icon">🅿️</div><span class="nav-title">Park<span>Smart</span></span></a>
+    <div class="nav-links">
+        <a href="/">Dashboard</a>
+        <a href="/entry">Vehicle Entry</a>
+        <a href="/exit" class="active">Vehicle Exit</a>
+        <a href="/slots">Slot View</a>
+        <a href="/records">All Records</a>
+    </div>
+</nav>
+<main>
+    <div class="page-header">
+        <h1>📤 Vehicle Exit</h1>
+        <p>Process vehicle exit and generate payment bill</p>
+    </div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+    <div class="form-card" th:if="${bill == null}">
+        <h2>🔍 Search Parked Vehicle</h2>
+        <form th:action="@{/exit}" method="post">
+            <div class="form-group">
+                <label>Vehicle Number *</label>
+                <input type="text" name="vehicleNumber" placeholder="e.g. TN01AB1234" required maxlength="15" style="text-transform:uppercase;"/>
+            </div>
+            <button type="submit" class="btn-submit">Process Exit & Generate Bill →</button>
+        </form>
+    </div>
+    <div th:if="${bill != null}" class="bill-card">
+        <div class="bill-header">
+            <h2>🧾 Parking Bill Receipt</h2>
+            <span class="paid-badge">✓ PAID</span>
+        </div>
+        <div class="bill-body">
+            <div class="bill-title">
+                <div class="org">🅿️ ParkSmart</div>
+                <div class="sub">Vehicle Parking Management System</div>
+            </div>
+            <hr class="bill-divider"/>
+            <div class="bill-row"><span class="key">Receipt No.</span><span class="val" th:text="'#PKG-' + ${bill.id}">PKG-001</span></div>
+            <div class="bill-row"><span class="key">Vehicle Number</span><span class="val" th:text="${bill.vehicleNumber}" style="font-family:monospace;font-size:1rem;">TN01AB1234</span></div>
+            <div class="bill-row"><span class="key">Owner Name</span><span class="val" th:text="${bill.ownerName}">Name</span></div>
+            <div class="bill-row"><span class="key">Mobile</span><span class="val" th:text="${bill.mobileNumber}">9999999999</span></div>
+            <div class="bill-row"><span class="key">Vehicle Type</span><span class="val" th:text="${bill.vehicleType.label}">4-Wheeler</span></div>
+            <div class="bill-row"><span class="key">Parking Slot</span><span class="val" th:text="${bill.slot.slotNumber}">FW-01</span></div>
+            <hr class="bill-divider"/>
+            <div class="bill-row"><span class="key">Entry Time</span><span class="val" th:text="${#temporals.format(bill.entryTime, 'dd MMM yyyy, HH:mm')}">01 Jan 2024</span></div>
+            <div class="bill-row"><span class="key">Exit Time</span><span class="val" th:text="${#temporals.format(bill.exitTime, 'dd MMM yyyy, HH:mm')}">01 Jan 2024</span></div>
+            <div class="bill-row"><span class="key">Duration</span><span class="val" th:text="${bill.totalHours} + ' hour(s)'">2.0 hour(s)</span></div>
+            <div class="bill-row"><span class="key">Rate</span><span class="val" th:text="'₹' + ${bill.vehicleType.ratePerHour} + ' / hour'">₹20 / hour</span></div>
+            <div class="bill-total">
+                <span class="key">Total Amount</span>
+                <span class="val" th:text="'₹' + ${bill.totalCharges}">₹40.0</span>
+            </div>
+            <div class="bill-actions">
+                <button class="btn-print" onclick="window.print()">🖨️ Print Receipt</button>
+                <a href="/" class="btn-back">← Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+    <div th:if="${bill != null}" style="text-align:center;margin-top:1rem;">
+        <a href="/exit" style="color:var(--primary);font-size:0.875rem;font-weight:600;text-decoration:none;">Process another exit →</a>
+    </div>
+</main>
+</body>
+</html>
