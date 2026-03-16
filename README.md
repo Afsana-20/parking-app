@@ -2,6 +2,19 @@
 
 ## 📌 Project Overview
 A professional *Vehicle Parking Management System* built as part of the *Cloud Essentials* subject project. The system manages vehicle entry, exit, slot allocation, and billing — deployed on cloud using *Render.com*.
+## 📸 Screenshots
+
+### 🏠 Dashboard
+![Dashboard](images/dashboard.png)
+
+### 📥 Vehicle Entry
+![Vehicle Entry](images/entry.png)
+
+### 🅿️ Slot View
+![Slot View](images/slots.png)
+
+### 🧾 Bill Receipt
+![Bill Receipt](images/bill.png)
 
 ---
 
@@ -138,6 +151,11 @@ User → Browser
 
 
 ---
+
+## 👨‍💻 Project Details
+- *Subject:* Cloud Essentials
+- *Platform:* Render.com (Free Tier)
+- *Live URL:* https://parksmart.onrender.com
 
 ## 👨‍💻 Project Details
 - *Subject:* Cloud Essentials
